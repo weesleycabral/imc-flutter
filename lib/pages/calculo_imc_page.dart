@@ -66,14 +66,24 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
                   children: [
-                    Text(resultadoIMCFormatted),
-                    // RichText(
-                    //   textAlign: TextAlign.justify,
-                    //   text: TextSpan(
-                    //       text: "${pesoController.text} / (${alturaController.text} ",
-                    //       style: const TextStyle(
-                    //           fontWeight: FontWeight.w400, fontSize: 14, color: Colors.black, wordSpacing: 1)),
-                    // ),
+                    if (resultadoIMC < 18.5)
+                      // Situação: Abaixo do peso
+                      Text('Abaixo do peso: $resultadoIMCFormatted')
+                    else if (resultadoIMC >= 18.5 && resultadoIMC < 24.9)
+                      // Situação: Peso normal
+                      Text('Peso normal: $resultadoIMCFormatted')
+                    else if (resultadoIMC >= 24.9 && resultadoIMC < 29.9)
+                      // Situação: Sobrepeso
+                      Text('Sobrepeso: $resultadoIMCFormatted')
+                    else if (resultadoIMC >= 29.9 && resultadoIMC < 34.9)
+                      // Situação: Obesidade grau 1
+                      Text('Obesidade grau 1: $resultadoIMCFormatted')
+                    else if (resultadoIMC >= 34.9 && resultadoIMC < 39.9)
+                      // Situação: Obesidade grau 2
+                      Text('Obesidade grau 2: $resultadoIMCFormatted')
+                    else
+                      // Situação: Obesidade grau 3
+                      Text('Obesidade grau 3: $resultadoIMCFormatted'),
                     ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
@@ -162,43 +172,44 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
               onChanged: (text) => setState(() => _text),
             ),
             const SizedBox(height: 100),
-            ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    isLoading = true;
-                    Future.delayed(const Duration(milliseconds: 3000), () {
-                      setState(() {
-                        isLoading = false;
-                        _showSimpleModalDialog(context);
-                        alturaController.clear();
-                        pesoController.clear();
+            if (pesoController.text.isNotEmpty && alturaController.text.isNotEmpty)
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isLoading = true;
+                      Future.delayed(const Duration(milliseconds: 3000), () {
+                        setState(() {
+                          isLoading = false;
+                          _showSimpleModalDialog(context);
+                          alturaController.clear();
+                          pesoController.clear();
+                        });
                       });
                     });
-                  });
-                  double alturaMetros = double.parse(alturaController.text) / 100;
-                  double resultadoIMC = int.parse(pesoController.text) / (alturaMetros * alturaMetros);
-                  resultadoIMCFormatted = resultadoIMC.toStringAsFixed(1);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.tertiary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 50,
-                    vertical: 20,
+                    double alturaMetros = double.parse(alturaController.text) / 100;
+                    double resultadoIMC = int.parse(pesoController.text) / (alturaMetros * alturaMetros);
+                    resultadoIMCFormatted = resultadoIMC.toStringAsFixed(1);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.tertiary,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 50,
+                      vertical: 20,
+                    ),
                   ),
-                ),
-                child: !isLoading
-                    ? const Text(
-                        'Calcular',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                  child: !isLoading
+                      ? const Text(
+                          'Calcular',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const CircularProgressIndicator(
                           color: Colors.white,
-                        ),
-                      )
-                    : const CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 3,
-                      ))
+                          strokeWidth: 3,
+                        ))
           ],
         ),
       ),
