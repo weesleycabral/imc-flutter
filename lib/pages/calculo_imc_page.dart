@@ -14,6 +14,45 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
   final _text = '';
   late int resultadoIMC;
   late String resultadoIMCFormatted;
+  FocusNode pesoFocusNode = FocusNode();
+  FocusNode alturaFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    pesoFocusNode.addListener(() {
+      setState(() {});
+    });
+
+    alturaFocusNode.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    pesoFocusNode.dispose();
+    alturaFocusNode.dispose();
+
+    super.dispose();
+  }
+
+  String? get _errorTextAltura {
+    final textAltura = alturaController.value.text;
+    if (textAltura.isEmpty) {
+      return 'Alura não pode ser vazia';
+    }
+    return null;
+  }
+
+  String? get _errorTextPeso {
+    final textPeso = pesoController.value.text;
+    if (textPeso.isEmpty) {
+      return 'Peso não pode ser vazio';
+    }
+    return null;
+  }
 
   _showSimpleModalDialog(context) {
     showDialog(
@@ -48,22 +87,6 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
         });
   }
 
-  String? get _errorTextAltura {
-    final textAltura = alturaController.value.text;
-    if (textAltura.isEmpty) {
-      return 'Alura não pode ser vazia';
-    }
-    return null;
-  }
-
-  String? get _errorTextPeso {
-    final textPeso = pesoController.value.text;
-    if (textPeso.isEmpty) {
-      return 'Peso não pode ser vazio';
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,10 +110,13 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
           children: [
             TextField(
               controller: pesoController,
+              focusNode: pesoFocusNode,
               style: const TextStyle(color: Colors.white),
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                errorText: _errorTextPeso,
+                hintText: 'e.g. 70',
+                hintStyle: const TextStyle(color: Color.fromARGB(80, 255, 255, 255)),
+                errorText: pesoFocusNode.hasFocus ? _errorTextPeso : null,
                 focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.white),
                   borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -110,10 +136,13 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
             const SizedBox(height: 50),
             TextField(
               controller: alturaController,
+              focusNode: alturaFocusNode,
               style: const TextStyle(color: Colors.white),
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                errorText: _errorTextAltura,
+                hintText: 'e.g. 180',
+                hintStyle: const TextStyle(color: Color.fromARGB(80, 255, 255, 255)),
+                errorText: alturaFocusNode.hasFocus ? _errorTextAltura : null,
                 enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.white,
@@ -141,6 +170,8 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
                       setState(() {
                         isLoading = false;
                         _showSimpleModalDialog(context);
+                        alturaController.clear();
+                        pesoController.clear();
                       });
                     });
                   });
