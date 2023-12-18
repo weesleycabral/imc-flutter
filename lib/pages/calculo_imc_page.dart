@@ -12,7 +12,7 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
   TextEditingController pesoController = TextEditingController();
   TextEditingController alturaController = TextEditingController();
   final _text = '';
-  late int resultadoIMC;
+  late double resultadoIMC;
   late String resultadoIMCFormatted;
   FocusNode pesoFocusNode = FocusNode();
   FocusNode alturaFocusNode = FocusNode();
@@ -41,7 +41,7 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
   String? get _errorTextAltura {
     final textAltura = alturaController.value.text;
     if (textAltura.isEmpty) {
-      return 'Alura não pode ser vazia';
+      return 'Altura não pode ser vazia';
     }
     return null;
   }
@@ -59,36 +59,74 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
         context: context,
         builder: (BuildContext context) {
           return Dialog(
+            backgroundColor: Theme.of(context).colorScheme.secondary,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
             child: Container(
-              constraints: const BoxConstraints(maxHeight: 350),
+              constraints: const BoxConstraints(maxHeight: 200),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
                   children: [
-                    if (resultadoIMC < 18.5)
-                      // Situação: Abaixo do peso
-                      Text('Abaixo do peso: $resultadoIMCFormatted')
-                    else if (resultadoIMC >= 18.5 && resultadoIMC < 24.9)
-                      // Situação: Peso normal
-                      Text('Peso normal: $resultadoIMCFormatted')
-                    else if (resultadoIMC >= 24.9 && resultadoIMC < 29.9)
-                      // Situação: Sobrepeso
-                      Text('Sobrepeso: $resultadoIMCFormatted')
-                    else if (resultadoIMC >= 29.9 && resultadoIMC < 34.9)
-                      // Situação: Obesidade grau 1
-                      Text('Obesidade grau 1: $resultadoIMCFormatted')
-                    else if (resultadoIMC >= 34.9 && resultadoIMC < 39.9)
-                      // Situação: Obesidade grau 2
-                      Text('Obesidade grau 2: $resultadoIMCFormatted')
-                    else
-                      // Situação: Obesidade grau 3
-                      Text('Obesidade grau 3: $resultadoIMCFormatted'),
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Fechar')),
+                    Column(
+                      children: <Widget>[
+                        Text(
+                          'IMC: $resultadoIMCFormatted',
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                        if (resultadoIMC < 18.5)
+                          // Situação: Abaixo do peso
+                          const Text(
+                            'Abaixo do peso',
+                            style: TextStyle(color: Color(0xff9E9E9E)),
+                          )
+                        else if (resultadoIMC >= 18.5 && resultadoIMC < 24.9)
+                          // Situação: Peso normal
+                          const Text(
+                            'Peso normal',
+                            style: TextStyle(color: Color(0xff9E9E9E)),
+                          )
+                        else if (resultadoIMC >= 24.9 && resultadoIMC < 29.9)
+                          // Situação: Sobrepeso
+                          const Text(
+                            'Sobrepeso',
+                            style: TextStyle(color: Color(0xff9E9E9E)),
+                          )
+                        else if (resultadoIMC >= 29.9 && resultadoIMC < 34.9)
+                          // Situação: Obesidade grau 1
+                          const Text(
+                            'Obesidade grau 1',
+                            style: TextStyle(color: Color(0xff9E9E9E)),
+                          )
+                        else if (resultadoIMC >= 34.9 && resultadoIMC < 39.9)
+                          // Situação: Obesidade grau 2
+                          const Text(
+                            'Obesidade grau 2',
+                            style: TextStyle(color: Color(0xff9E9E9E)),
+                          )
+                        else
+                          // Situação: Obesidade grau 3
+                          const Text(
+                            'Obesidade grau 3',
+                            style: TextStyle(color: Color(0xff9E9E9E)),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 65),
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.all(8),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.tertiary,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'Fechar',
+                            style: TextStyle(color: Colors.white),
+                          )),
+                    ),
                   ],
                 ),
               ),
@@ -187,7 +225,7 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
                       });
                     });
                     double alturaMetros = double.parse(alturaController.text) / 100;
-                    double resultadoIMC = int.parse(pesoController.text) / (alturaMetros * alturaMetros);
+                    resultadoIMC = int.parse(pesoController.text) / (alturaMetros * alturaMetros);
                     resultadoIMCFormatted = resultadoIMC.toStringAsFixed(1);
                   },
                   style: ElevatedButton.styleFrom(
