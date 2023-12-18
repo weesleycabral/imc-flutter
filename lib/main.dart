@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Cálculo IMC',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
               seedColor: const Color(0x001F1F1F),
