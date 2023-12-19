@@ -1,3 +1,4 @@
+import 'package:calc_imc/presenter/calculo_imc_presenter.dart';
 import 'package:flutter/material.dart';
 
 class CaculoImcPage extends StatefulWidget {
@@ -8,38 +9,35 @@ class CaculoImcPage extends StatefulWidget {
 }
 
 class _CaculoImcPageState extends State<CaculoImcPage> {
-  bool isLoading = false;
-  TextEditingController pesoController = TextEditingController();
-  TextEditingController alturaController = TextEditingController();
-  final _text = '';
-  late double resultadoIMC;
-  late String resultadoIMCFormatted;
-  FocusNode pesoFocusNode = FocusNode();
-  FocusNode alturaFocusNode = FocusNode();
+  late CalculoImcPresenter presenter;
 
   @override
   void initState() {
     super.initState();
-
-    pesoFocusNode.addListener(() {
+    init();
+    presenter.pesoFocusNode.addListener(() {
       setState(() {});
     });
 
-    alturaFocusNode.addListener(() {
+    presenter.alturaFocusNode.addListener(() {
       setState(() {});
     });
   }
 
+  init() {
+    presenter = CalculoImcPresenter(widget, context);
+  }
+
   @override
   void dispose() {
-    pesoFocusNode.dispose();
-    alturaFocusNode.dispose();
+    presenter.pesoFocusNode.dispose();
+    presenter.alturaFocusNode.dispose();
 
     super.dispose();
   }
 
   String? get _errorTextAltura {
-    final textAltura = alturaController.value.text;
+    final textAltura = presenter.alturaController.value.text;
     if (textAltura.isEmpty) {
       return 'Altura não pode ser vazia';
     }
@@ -47,7 +45,7 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
   }
 
   String? get _errorTextPeso {
-    final textPeso = pesoController.value.text;
+    final textPeso = presenter.pesoController.value.text;
     if (textPeso.isEmpty) {
       return 'Peso não pode ser vazio';
     }
@@ -70,34 +68,34 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
                     Column(
                       children: <Widget>[
                         Text(
-                          'IMC: $resultadoIMCFormatted',
+                          'IMC: ${presenter.resultadoIMCFormatted}',
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                         ),
-                        if (resultadoIMC < 18.5)
+                        if (presenter.resultadoIMC < 18.5)
                           // Situação: Abaixo do peso
                           const Text(
                             'Abaixo do peso',
                             style: TextStyle(color: Color(0xff9E9E9E)),
                           )
-                        else if (resultadoIMC >= 18.5 && resultadoIMC < 24.9)
+                        else if (presenter.resultadoIMC >= 18.5 && presenter.resultadoIMC < 24.9)
                           // Situação: Peso normal
                           const Text(
                             'Peso normal',
                             style: TextStyle(color: Color(0xff9E9E9E)),
                           )
-                        else if (resultadoIMC >= 24.9 && resultadoIMC < 29.9)
+                        else if (presenter.resultadoIMC >= 24.9 && presenter.resultadoIMC < 29.9)
                           // Situação: Sobrepeso
                           const Text(
                             'Sobrepeso',
                             style: TextStyle(color: Color(0xff9E9E9E)),
                           )
-                        else if (resultadoIMC >= 29.9 && resultadoIMC < 34.9)
+                        else if (presenter.resultadoIMC >= 29.9 && presenter.resultadoIMC < 34.9)
                           // Situação: Obesidade grau 1
                           const Text(
                             'Obesidade grau 1',
                             style: TextStyle(color: Color(0xff9E9E9E)),
                           )
-                        else if (resultadoIMC >= 34.9 && resultadoIMC < 39.9)
+                        else if (presenter.resultadoIMC >= 34.9 && presenter.resultadoIMC < 39.9)
                           // Situação: Obesidade grau 2
                           const Text(
                             'Obesidade grau 2',
@@ -157,14 +155,14 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
         child: Column(
           children: [
             TextField(
-              controller: pesoController,
-              focusNode: pesoFocusNode,
+              controller: presenter.pesoController,
+              focusNode: presenter.pesoFocusNode,
               style: const TextStyle(color: Colors.white),
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 hintText: 'e.g. 70',
                 hintStyle: const TextStyle(color: Color.fromARGB(80, 255, 255, 255)),
-                errorText: pesoFocusNode.hasFocus ? _errorTextPeso : null,
+                errorText: presenter.pesoFocusNode.hasFocus ? _errorTextPeso : null,
                 focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.white),
                   borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -179,18 +177,18 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
                   color: Colors.white,
                 ),
               ),
-              onChanged: (text) => setState(() => _text),
+              onChanged: (text) => setState(() => presenter.text),
             ),
             const SizedBox(height: 50),
             TextField(
-              controller: alturaController,
-              focusNode: alturaFocusNode,
+              controller: presenter.alturaController,
+              focusNode: presenter.alturaFocusNode,
               style: const TextStyle(color: Colors.white),
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 hintText: 'e.g. 180',
                 hintStyle: const TextStyle(color: Color.fromARGB(80, 255, 255, 255)),
-                errorText: alturaFocusNode.hasFocus ? _errorTextAltura : null,
+                errorText: presenter.alturaFocusNode.hasFocus ? _errorTextAltura : null,
                 enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.white,
@@ -207,26 +205,26 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
                   color: Colors.white,
                 ),
               ),
-              onChanged: (text) => setState(() => _text),
+              onChanged: (text) => setState(() => presenter.text),
             ),
             const SizedBox(height: 100),
-            if (pesoController.text.isNotEmpty && alturaController.text.isNotEmpty)
+            if (presenter.pesoController.text.isNotEmpty && presenter.alturaController.text.isNotEmpty)
               ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      isLoading = true;
+                      presenter.isLoading = true;
                       Future.delayed(const Duration(milliseconds: 3000), () {
                         setState(() {
-                          isLoading = false;
+                          presenter.isLoading = false;
                           _showSimpleModalDialog(context);
-                          alturaController.clear();
-                          pesoController.clear();
+                          presenter.alturaController.clear();
+                          presenter.pesoController.clear();
                         });
                       });
                     });
-                    double alturaMetros = double.parse(alturaController.text) / 100;
-                    resultadoIMC = int.parse(pesoController.text) / (alturaMetros * alturaMetros);
-                    resultadoIMCFormatted = resultadoIMC.toStringAsFixed(1);
+                    double alturaMetros = double.parse(presenter.alturaController.text) / 100;
+                    presenter.resultadoIMC = int.parse(presenter.pesoController.text) / (alturaMetros * alturaMetros);
+                    presenter.resultadoIMCFormatted = presenter.resultadoIMC.toStringAsFixed(1);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.tertiary,
@@ -235,7 +233,7 @@ class _CaculoImcPageState extends State<CaculoImcPage> {
                       vertical: 20,
                     ),
                   ),
-                  child: !isLoading
+                  child: !presenter.isLoading
                       ? const Text(
                           'Calcular',
                           style: TextStyle(

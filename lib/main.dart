@@ -22,6 +22,6 @@ class MyApp extends StatelessWidget {
               onError: const Color(0xffDCDCDC)),
           useMaterial3: true,
         ),
-        home: const CaculoImcPage());
+        home: CaculoImcPage());
   }
 }
